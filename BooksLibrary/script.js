@@ -6,41 +6,49 @@ let btn1 = document.getElementById('btn1');
 let btn2 = document.getElementById('btn2');
 let session1 = document.getElementById('session1');
 let session2 = document.getElementById('session2');
-
+let info = document.getElementById('info');
 
 btn2.style.display = 'none';
 session1.style.display = 'none';
 session2.style.display = 'none';
 suc.style.display = 'none';
 err.style.display = 'none';
+info.style.display = 'none';
 
 btn1.addEventListener('click', () => {
     btn2.style.display = 'block';
     session1.style.display = 'block';
     session2.style.display = 'block';
     btn1.style.display = 'none';
+
+    if(localStorage.getItem('BookName') == null){
+        info.style.display = 'block';
+    }else{
+        show();
+    }
 });
 
 btn2.addEventListener('click', () => {
     btn2.style.display = 'none';
     session1.style.display = 'none';
     session2.style.display = 'none';
+    info.style.display = 'none';
     btn1.style.display = 'block';
 });
 
-show();
+
 
 submit.addEventListener('click', () => {
     let bookName = document.getElementById('text1').value;
     let authorName = document.getElementById('text2').value;
     let totalBook = document.getElementById('text3').value;
-
+    
     if((localStorage.getItem('BookName') && localStorage.getItem('AuthorName') && localStorage.getItem('TotalBook')) == null){
         localStorage.setItem('BookName', '[]');
         localStorage.setItem('AuthorName', '[]');
         localStorage.setItem('TotalBook', '[]');
     }
-
+    
     if((bookName && authorName && totalBook) == ""){
         err.style.display = 'block';
         setTimeout(() => {
@@ -59,42 +67,50 @@ submit.addEventListener('click', () => {
         let old_data3 = JSON.parse(localStorage.getItem('TotalBook'));
         old_data3.push(totalBook);
         localStorage.setItem('TotalBook', JSON.stringify(old_data3));
-    
+        
         document.getElementById('text1').value = "";
         document.getElementById('text2').value = "";
         document.getElementById('text3').value = "";
-
+        
         suc.style.display = 'block';
         setTimeout(() => {
             suc.style.display = 'none';
         }, 1000);
 
+        
+        info.style.display = 'none';
         show();
     }
 });
 
 function show() {
     let dataShow = document.getElementById('dataShow');
-
+    
     let getBook = JSON.parse(localStorage.getItem('BookName'));
     let getAuthor = JSON.parse(localStorage.getItem('AuthorName'));
     let getTotal = JSON.parse(localStorage.getItem('TotalBook'));
-
-    let index = getBook.length;
     
+    let index = getBook.length;
 
+    if(index == 0){
+        info.style.display = 'block';
+    }else{
+        info.style.display = 'none';
+    }
+    
+    
     let htmlData = ``;
-
+    
     if((getBook) != null){
         for(let i = 0; i<index; i++){
             htmlData += `
             <tr>
-                <th>${i+1}</th>
-                <th>${getBook[i]}</th>
-                <th>${getAuthor[i]}</th>
-                <th>${getTotal[i]}</th>
-                <th class="btn-group"><button onclick="edt(${i})"><i class="fas fa-edit"></i></button>
-                <button onclick="del(${i})"><i class="fas fa-trash-alt"></i></button></th>
+            <th>${i+1}</th>
+            <th>${getBook[i]}</th>
+            <th>${getAuthor[i]}</th>
+            <th>${getTotal[i]}</th>
+            <th class="btn-group"><button onclick="edt(${i})"><i class="fas fa-edit"></i></button>
+            <button onclick="del(${i})"><i class="fas fa-trash-alt"></i></button></th>
             </tr>`;
         };
     }
@@ -105,9 +121,9 @@ function del(index) {
     let data1 = JSON.parse(localStorage.getItem('BookName'));
     let data2 = JSON.parse(localStorage.getItem('AuthorName'));
     let data3 = JSON.parse(localStorage.getItem('TotalBook'));
-
+    
     let len = data1.length;
-
+    
     if((data1) != null){
         for(let i = 0; i<len; i++){
             if(index == i){
@@ -120,7 +136,14 @@ function del(index) {
             }
         };
     }
+    
+    if(len == 1){
+        info.style.display = 'block';
+    }else{
+        info.style.display = 'none';
+    }
 
+    
     show();
 }
 
